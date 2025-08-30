@@ -7,8 +7,9 @@ const getPageCount = require("./getPageCount");
 const app = express();
 
 // Middleware
-app.use(fileUpload());
+// Assuming your index.html is in a 'public' folder.
 app.use(express.static("public")); 
+app.use(fileUpload());
 
 // Ensure uploads folder exists
 const uploadDir = path.join(__dirname, "uploads");
