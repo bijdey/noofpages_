@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Page Counter</title>
+</head>
+<body>
+  <h1>📄 Upload a File to Count Pages</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" required />
+    <button type="submit">Upload & Count</button>
+  </form>
+  <p id="result"></p>
+
+  <script>
+    //just a test
+    const form = document.getElementById("uploadForm");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      const res = await fetch("/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        result.textContent = "❌ Error uploading file";
+        return;
+      }
+
+      const data = await res.json();
+      result.textContent = `✅ File: ${data.file} | Pages: ${data.pages}`;
+    });
+  </script>
+</body>
+</html>

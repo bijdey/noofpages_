@@ -1,0 +1,5 @@
+/node_modules
+/text.html
+/.vscode
+
+/  Remove-Item -Path .\uploads\* -Recurse -Force
