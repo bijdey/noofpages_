@@ -3,6 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <title>File Page Counter</title>
+  <style>
+    /* Loader styles */
+    #loader {
+      display: none;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
   <h1>📄 Upload a File to Count Pages</h1>
@@ -10,29 +33,44 @@
     <input type="file" name="file" id="fileInput" required />
     <button type="submit">Upload & Count</button>
   </form>
+  
+  <!-- Loader -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p>Counting pages... Please wait</p>
+  </div>
+
   <p id="result"></p>
 
   <script>
-    //just a test
     const form = document.getElementById("uploadForm");
     const result = document.getElementById("result");
+    const loader = document.getElementById("loader");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      result.textContent = ""; // clear old result
+      loader.style.display = "block"; // show loader
+
       const formData = new FormData(form);
 
-      const res = await fetch("/upload", {
-        method: "POST",
-        body: formData,
-      });
+      try {
+        const res = await fetch("/upload", {
+          method: "POST",
+          body: formData,
+        });
 
-      if (!res.ok) {
-        result.textContent = "❌ Error uploading file";
-        return;
+        if (!res.ok) {
+          result.textContent = "❌ Error uploading file";
+        } else {
+          const data = await res.json();
+          result.textContent = `✅ File: ${data.file} | Pages: ${data.pages}`;
+        }
+      } catch (err) {
+        result.textContent = "⚠️ Something went wrong!";
+      } finally {
+        loader.style.display = "none"; // hide loader
       }
-
-      const data = await res.json();
-      result.textContent = `✅ File: ${data.file} | Pages: ${data.pages}`;
     });
   </script>
 </body>
